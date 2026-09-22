@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Content</title>
+    <!-- 외부 데이터 파일 불러오기 -->
+    <script src="data.js"></script>
+    <style>
+        :root { 
+            --primary: #4285f4; --bg: #f4f5f7; --border: #e0e0e0; --white: #fff; --text: #3c4043; 
+            --gray-btn: #f1f3f4; --gray-text: #5f6368;
+            --dull-blue: #7a97c2; --dull-gray: #9ba3af;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', 'Malgun Gothic', sans-serif; margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+        /* 레이아웃 구성 */
+        .app-layout { display: flex; width: 100%; min-height: 100vh; }
+        
+        /* 사이드바 네비게이션 */
+        .sidebar { position: fixed; top: 0; left: 0; width: 220px; height: 100vh; background: var(--white); border-right: 1px solid var(--border); padding: 20px; z-index: 1100; box-shadow: 2px 0 10px rgba(0,0,0,0.02); }
+        .sidebar-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-item { padding: 12px 15px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--gray-text); transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
+        .nav-item:hover:not(.locked) { background: var(--bg); }
+        .nav-item.active { background: var(--primary); color: var(--white); box-shadow: 0 2px 6px rgba(66, 133, 244, 0.3); }
+        .nav-item.locked { color: #b0b5ba; cursor: not-allowed; background: #fafafa; }
+        .nav-item.locked .lock-icon { font-size: 12px; }
+
+        /* 메인 컨텐츠 영역 */
+        .main-content { margin-left: 220px; width: calc(100% - 220px); display: flex; flex-direction: column; min-height: 100vh; }
+        
+        .sticky-header { position: sticky; top: 0; background: var(--white); padding: 15px 25px; border-bottom: 1px solid var(--border); width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .container { max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        
+        .ctrl-row { display: flex; justify-content: center; align-items: center; margin-bottom: 5px; gap: 15px; width: 100%; flex-wrap: nowrap; }
+        .btn-grp { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+        .font-control-inline { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 250px; margin: 0 10px; }
+        .font-icon { color: var(--gray-text); font-weight: 700; font-size: 12px; }
+        .large-A { font-size: 18px; }
+        #font-slider { flex: 1; -webkit-appearance: none; height: 4px; background: #e0e0e0; border-radius: 5px; outline: none; }
+        #font-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); cursor: pointer; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+        .btn { border: 1px solid var(--dull-gray); background: var(--white); color: var(--dull-gray); cursor: pointer; border-radius: 4px; padding: 5px 10px; font-size: 12px; font-weight: 600; height: 32px; transition: 0.2s; }
+        .btn.active { background: var(--dull-blue) !important; color: var(--white) !important; border-color: var(--dull-blue) !important; }
+
+        .toggle-btn { border: 1px solid #dadce0; background: var(--gray-btn); color: var(--gray-text); border-radius: 6px; padding: 6px 12px; min-width: 50px; font-weight: 600; height: 32px; }
+        .toggle-btn.active { background: #bdc1c6 !important; color: #202124 !important; }
+
+        audio { display: none; }
+
+        .practice-bar { background: #fff; padding: 10px 20px; border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; height: 50px; margin-top: 10px; }
+        .left-controls { display: flex; align-items: center; gap: 15px; }
+        
+        #global-status-icon, #global-skip-icon { font-size: 18px; text-align: center; cursor: pointer; transition: 0.2s; }
+        
+        .switch-box { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: bold; white-space: nowrap; }
+        
+        .text-toggle { position: relative; display: flex; align-items: center; width: 120px; height: 34px; background-color: #e2e3e5; border-radius: 17px; cursor: pointer; padding: 2px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); margin: 0; }
+        .text-toggle input { display: none; }
+        .text-toggle-slider { position: absolute; top: 2px; left: 2px; width: 58px; height: 30px; background-color: #fff; border-radius: 15px; transition: 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 1; }
+        .text-toggle input:checked + .text-toggle-slider { transform: translateX(58px); background-color: var(--dull-blue); }
+        .text-toggle-texts { position: relative; z-index: 2; display: flex; width: 100%; justify-content: space-between; font-size: 13px; font-weight: 800; pointer-events: none; align-items: center; height: 100%; }
+        .text-toggle-texts span { flex: 1; text-align: center; transition: 0.3s ease; color: #95a5a6; }
+        .text-toggle input:not(:checked) ~ .text-toggle-texts .txt-left { color: var(--primary); }
+        .text-toggle input:checked ~ .text-toggle-texts .txt-left { color: #95a5a6; }
+        .text-toggle input:checked ~ .text-toggle-texts .txt-right { color: #fff; }
+
+        #repeat-count { border: 1px solid #ddd; border-radius: 4px; padding: 0 4px; font-size: 13px; height: 28px; background: #fff; outline: none; }
+        #current-count { font-size: 14px; color: var(--primary); font-weight: 800; min-width: 45px; text-align: center; }
+
+        .scroll-area { flex: 1; padding: 30px 0; width: 100%; }
+        .content-wrap { max-width: 900px; margin: 0 auto; width: 100%; padding-bottom: 60vh; }
+        #scroll-top-btn {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--white);
+            border: 1px solid var(--border); border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 24px; z-index: 1002;
+        }
+
+        .section-title { font-size: 24px; color: var(--text); margin-bottom: 30px; cursor: pointer; font-weight: 800; text-align: center; padding: 10px; background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
+        .chat-row { display: flex; width: 100%; margin-bottom: 10px; align-items: flex-end; gap: 10px; }
+        .chat-left { justify-content: flex-start; }
+
+        .avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: white; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s; }
+        .avatar:hover { transform: scale(1.05); }
+        .avatar-E { background-color: #8ab4f8; } 
+        .avatar-BF { background-color: #81c995; } 
+        .avatar-S { background-color: #f48fb1; } 
+        .avatar-B { background-color: #fbbc04; } 
+        .avatar-M { background-color: #d81b60; }
+
+        .card { position: relative; padding: 10px 14px; border-radius: 20px; max-width: 75%; display: flex; flex-direction: column; border: 2px solid transparent; box-shadow: 0 2px 6px rgba(0,0,0,0.04); transition: 0.2s; cursor: pointer; overflow: hidden; align-items: flex-start; border-bottom-left-radius: 4px; }
+        
+        .bg-E { background-color: #e8f0fe; border-color: #d2e3fc; }
+        .bg-BF { background-color: #e6f4ea; border-color: #ceead6; }
+        .bg-S { background-color: #fce8e6; border-color: #fad2cf; }
+        .bg-B { background-color: #fef7e0; border-color: #fde293; }
+        .bg-M { background-color: #fce4ec; border-color: #f8bbd0; }
+
+        .card.active-play, .card.playing { border-color: var(--primary) !important; box-shadow: 0 4px 12px rgba(66, 133, 244, 0.25) !important; background-color: #fff !important; }
+
+        .bubble-header { display: flex; justify-content: flex-start; align-items: center; width: 100%; margin-bottom: 4px; gap: 4px; }
+
+        .speaker-name { font-size: 13px; font-weight: 800; opacity: 0.85; }
+        .name-E { color: #174ea6; }
+        .name-BF { color: #0d652d; }
+        .name-S { color: #b0120a; }
+        .name-B { color: #e65100; }
+        .name-M { color: #880e4f; }
+
+        .play-btn { width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; background-size: contain; background-repeat: no-repeat; opacity: 0.8; margin-top: 1px; }
+        .playing .play-btn { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'%3E%3Cpath d='M6 19h4V5H6v14zm8-14v14h4V5h-4z'/%3E%3C/svg%3E"); }
+        .card:not(.playing) .play-btn { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23777'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E"); }
+
+        .text-content { flex: 1; display: flex; flex-direction: column; width: 100%; gap: 6px; }
+        .sentence-eng { font-size: 18px; font-weight: 700; line-height: 1.6; order: 1; color: #202124; word-break: keep-all; overflow-wrap: break-word; }
+        .ipa-text { color: #7f8c8d; font-size: 14px; order: 2; line-height: 1.4; word-break: keep-all; }
+        .trans-text { color: #95a5a6; font-size: 13.5px; order: 3; font-weight: 600; line-height: 1.5; word-break: keep-all; }
+
+        .chunk { 
+            pointer-events: auto; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            padding: 2px 4px; 
+            display: inline; 
+            -webkit-box-decoration-break: clone; 
+            box-decoration-break: clone;
+            transition: background 0.1s; 
+        }
+        .chunk:hover { background: rgba(66, 133, 244, 0.15); }
+        .chunk.active { background: rgba(66, 133, 244, 0.2) !important; color: #174ea6 !important; }
+
+        @media (max-width: 768px) { 
+            .sidebar { width: 80px; padding: 20px 10px; }
+            .sidebar-title { display: none; }
+            .nav-item { flex-direction: column; text-align: center; font-size: 12px; padding: 10px 5px; }
+            .main-content { margin-left: 80px; width: calc(100% - 80px); }
+            .container, .content-wrap { max-width: 95%; }
+            .font-control-inline { display: none; }
+            .card { max-width: 88%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- 사이드바: 자바스크립트로 자동 생성됨 -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Missions</div>
+            <ul class="nav-list" id="nav-list"></ul>
+        </aside>
+
+        <!-- 메인 영역 -->
+        <div class="main-content">
+            <header class="sticky-header">
+                <div class="container">
+                    <div class="ctrl-row">
+                        <div class="btn-grp">
+                            <button class="btn" onclick="setSpeed(0.3, this)">x0.3</button>
+                            <button class="btn" onclick="setSpeed(0.5, this)">x0.5</button>
+                            <button class="btn" onclick="setSpeed(0.7, this)">x0.7</button>
+                            <button class="btn active" onclick="setSpeed(1.0, this)">x1.0</button>
+                        </div>
+                        
+                        <div class="font-control-inline">
+                            <span class="font-icon">A</span>
+                            <input type="range" id="font-slider" min="14" max="32" value="18" step="1">
+                            <span class="font-icon large-A">A</span>
+                        </div>
+
+                        <div class="btn-grp" id="toggle-group">
+                            <button class="btn toggle-btn active" id="btn-ipa" onclick="toggleDisplay('.ipa-text', this)">IPA</button>
+                            <button class="btn toggle-btn active" id="btn-trans" onclick="toggleDisplay('.trans-text', this)">한</button>
+                        </div>
+                    </div>
+
+                    <div class="practice-bar">
+                        <div class="left-controls">
+                            <span id="global-status-icon" onclick="toggleAutoPlayAll()">▶️</span>
+                            <span id="global-skip-icon" onclick="skipNext()" style="margin-left:-2px;">⏭️</span>
+                            
+                            <div class="switch-box" style="margin-left: 5px;">
+                                <label class="text-toggle">
+                                    <input type="checkbox" id="shadow-mode" onchange="syncSettings('shadow', this.checked)">
+                                    <div class="text-toggle-slider"></div>
+                                    <div class="text-toggle-texts">
+                                        <span class="txt-left">듣기</span>
+                                        <span class="txt-right">섀도잉</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="switch-box">
+                                <span>반복</span>
+                                <select id="repeat-count" onchange="syncSettings('repeat', this.value)">
+                                    <option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="5">5</option>
+                                </select>
+                                <span id="current-count"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <audio id="player"></audio> 
+            <main class="scroll-area" id="scroll-area">
+                <div class="content-wrap" id="display-area"></div>
+            </main>
+            <button id="scroll-top-btn" onclick="scrollToTop()">🔝</button>
+        </div>
+    </div>
+
+    <script>
+        const player = document.getElementById('player'), 
+              displayArea = document.getElementById('display-area'), 
+              fontSlider = document.getElementById('font-slider'),
+              statusIcon = document.getElementById('global-status-icon'),
+              topBtn = document.getElementById('scroll-top-btn');
+        
+        let currentData = null; 
+        let isShadowing = false, currentRepeat = 0, stopTime = 0, isAutoPlaying = false, isContinuousPlay = false;
+
+        // 시스템 날짜에 맞춰 사이드바 메뉴 렌더링
+        function initSidebar() {
+            const navList = document.getElementById('nav-list');
+            let html = '';
+            const now = new Date(); // 시스템 날짜 로드
+
+            for (const [key, data] of Object.entries(scriptsData)) {
+                const unlockDate = data.unlockDate ? new Date(data.unlockDate) : null;
+                const isLocked = unlockDate && now < unlockDate;
+                
+                const lockIcon = isLocked ? '<span class="lock-icon">🔒</span>' : '';
+                const activeClass = key === 'wk01' ? 'active' : ''; 
+                
+                html += `<li class="nav-item ${activeClass} ${isLocked ? 'locked' : ''}" 
+                             data-key="${key}" 
+                             onclick="handleNavClick('${key}', this, ${isLocked})">
+                            <span>${key.toUpperCase()} Dubbing</span>${lockIcon}
+                         </li>`;
+            }
+            navList.innerHTML = html;
+        }
+
+        function handleNavClick(key, navEl, isLocked) {
+            if (isLocked) {
+                const unlockDate = new Date(scriptsData[key].unlockDate);
+                // hour12: false 옵션을 추가하여 24시간제로 표시
+                const formatOpts = { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+                alert(`아직 잠겨있는 미션입니다.\n공개 일시: ${unlockDate.toLocaleString('ko-KR', formatOpts)}`);
+                return;
+            }
+            loadScript(key, navEl);
+        }
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 150) topBtn.style.display = 'flex';
+            else topBtn.style.display = 'none';
+        });
+
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        function syncSettings(type, value) {
+            if (type === 'shadow') {
+                isShadowing = value;
+                stopAll();
+            }
+        }
+
+        function scrollToActive(el) {
+            if (!el) return;
+            const elRect = el.getBoundingClientRect();
+            const headerHeight = document.querySelector('.sticky-header').offsetHeight || 80;
+            window.scrollTo({ top: elRect.top + window.scrollY - headerHeight - 20, behavior: 'smooth' });
+        }
+        
+        function applyFontSize() {
+            const baseSize = parseInt(fontSlider.value);
+            document.querySelectorAll('.sentence-eng').forEach(el => el.style.fontSize = baseSize + 'px');
+            document.querySelectorAll('.trans-text').forEach(el => el.style.fontSize = Math.max(11, baseSize * 0.75) + 'px');
+            document.querySelectorAll('.ipa-text').forEach(el => el.style.fontSize = Math.max(12, baseSize * 0.8) + 'px');
+        }
+
+        function loadScript(key, navEl) {
+            if (!scriptsData[key]) return;
+            if (navEl) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                navEl.classList.add('active');
+            }
+            currentData = scriptsData[key];
+            stopAll(); 
+            renderContent();
+        }
+
+        function renderContent() {
+            if (!currentData) return;
+            
+            let html = `<div class="section-title" onclick="toggleContinuousPlay()">${currentData.title}</div>`;
+            
+            currentData.sentences.forEach(item => {
+                const chunks = item.chunks.map(c => `<span class="chunk" data-s="${c.s}" data-e="${c.e}">${c.text}</span>`).join(' ');
+                const content = `<div class="text-content"><div class="sentence-eng">${chunks}</div><div class="ipa-text">${item.ipa}</div><div class="trans-text">${item.trans}</div></div>`;
+                
+                const alignClass = 'chat-left';
+                const bgClass = `bg-${item.speaker}`;
+                const avatarClass = `avatar-${item.speaker}`;
+                const nameClass = `name-${item.speaker}`;
+                let speakerName = item.speaker;
+                if (item.speaker === 'E') speakerName = 'Emily';
+                if (item.speaker === 'BF') speakerName = 'Boyfriend';
+                if (item.speaker === 'S') speakerName = 'Sylvie';
+                if (item.speaker === 'B') speakerName = 'Broussard';
+                if (item.speaker === 'M') speakerName = 'Mindy';
+
+                const header = `
+                    <div class="bubble-header">
+                        <span class="speaker-name ${nameClass}">[ ${speakerName} ]</span>
+                        <div class="play-btn"></div>
+                    </div>`;
+                
+                html += `
+                    <div class="chat-row ${alignClass}">
+                        <div class="avatar ${avatarClass}">${item.speaker}</div>
+                        <div class="card ${bgClass}" data-start="${item.start}" data-end="${item.end}">
+                            ${header}
+                            ${content}
+                        </div>
+                    </div>`;
+            });
+            
+            displayArea.innerHTML = html; 
+            applyFontSize();
+            
+            player.src = currentData.audio; 
+            player.load();
+            applyButtonState('.ipa-text', 'btn-ipa'); 
+            applyButtonState('.trans-text', 'btn-trans');
+        }
+
+        function applyButtonState(sel, id) {
+            const targetBtn = document.getElementById(id);
+            if (targetBtn) {
+                const active = targetBtn.classList.contains('active');
+                document.querySelectorAll(sel).forEach(el => el.style.display = active ? 'block' : 'none');
+            }
+        }
+
+        function toggleDisplay(sel, btn) { btn.classList.toggle('active'); applyButtonState(sel, btn.id); }
+
+        displayArea.addEventListener('click', (e) => {
+            const chunk = e.target.closest('.chunk');
+            if (chunk) { 
+                stopAll(); 
+                chunk.classList.add('active'); 
+                const targetCard = chunk.closest('.card');
+                if (targetCard) targetCard.classList.add('playing', 'active-play');
+                playPart(parseFloat(chunk.dataset.s), parseFloat(chunk.dataset.e));
+                return; 
+            }
+            
+            const avatar = e.target.closest('.avatar');
+            const card = e.target.closest('.card');
+            const playBtn = e.target.closest('.play-btn');
+
+            let targetCard = card;
+            if (avatar) targetCard = avatar.closest('.chat-row').querySelector('.card');
+
+            if (playBtn || targetCard) {
+                if (targetCard.classList.contains('playing')) { 
+                    player.pause(); 
+                    targetCard.classList.remove('playing'); 
+                } else { 
+                    stopAll(); 
+                    targetCard.classList.add('playing', 'active-play'); 
+                    scrollToActive(targetCard); 
+                    playPart(parseFloat(targetCard.dataset.start), parseFloat(targetCard.dataset.end)); 
+                }
+            }
+        });
+
+        function toggleAutoPlayAll() {
+            if (isAutoPlaying) {
+                stopAll();
+            } else { 
+                stopAll(); 
+                isAutoPlaying = true; 
+                statusIcon.innerText = "⏸️";
+
+                const first = displayArea.querySelector('.card'); 
+                if (first) { 
+                    first.classList.add('active-play', 'playing');
+                    scrollToActive(first);
+                    playPart(parseFloat(first.dataset.start), parseFloat(first.dataset.end));
+                } 
+            }
+        }
+
+        function toggleContinuousPlay() {
+            if (isContinuousPlay) {
+                stopAll();
+            } else {
+                stopAll();
+                isContinuousPlay = true;
+                player.currentTime = 0;
+                player.play();
+            }
+        }
+
+        function skipNext() {
+            clearTimeout(window.shadowTimer);
+            const active = document.querySelector('.card.playing') || document.querySelector('.card.active-play');
+            
+            if (isContinuousPlay) {
+                const ct = player.currentTime;
+                const cards = Array.from(document.querySelectorAll('.card'));
+                let nextCard = cards.find(c => parseFloat(c.dataset.start) > ct + 0.5);
+                if (nextCard) player.currentTime = parseFloat(nextCard.dataset.start);
+                return;
+            }
+
+            if (active) {
+                player.pause();
+                currentRepeat = 0;
+                isAutoPlaying = true;
+                statusIcon.innerText = "⏸️";
+                handleNext(active);
+            } else {
+                toggleAutoPlayAll();
+            }
+        }
+
+        function playPart(s, e) { 
+            clearTimeout(window.shadowTimer); 
+            const rate = player.playbackRate;
+            let startPoint = Math.max(0, s - (0.05 * rate)); 
+            let endPoint = e;
+
+            if ((e - s) > 0.8) endPoint = e - (0.15 * rate); 
+            stopTime = endPoint; 
+            player.currentTime = startPoint; 
+            player.play(); 
+        }
+
+        function stopAll() { 
+            player.pause(); 
+            isAutoPlaying = false; 
+            isContinuousPlay = false;
+            statusIcon.innerText = "▶️";
+            currentRepeat = 0; stopTime = 0; clearTimeout(window.shadowTimer);
+            document.getElementById('current-count').innerText = '';
+            document.querySelectorAll('.playing, .active-play, .chunk.active').forEach(el => {
+                el.classList.remove('playing', 'active-play', 'active');
+            });
+        }
+
+        player.addEventListener('timeupdate', () => {
+            if (isContinuousPlay) {
+                const ct = player.currentTime;
+                const cards = document.querySelectorAll('.card');
+                let currentActive = null;
+                
+                cards.forEach(card => {
+                    const start = parseFloat(card.dataset.start);
+                    const end = parseFloat(card.dataset.end);
+                    if (ct >= start && ct <= end) {
+                        currentActive = card;
+                    }
+                });
+
+                if (currentActive) {
+                    if (!currentActive.classList.contains('playing')) {
+                        document.querySelectorAll('.card.playing').forEach(c => c.classList.remove('playing', 'active-play'));
+                        currentActive.classList.add('playing', 'active-play');
+                        scrollToActive(currentActive);
+                    }
+                } else {
+                    document.querySelectorAll('.card.playing').forEach(c => c.classList.remove('playing', 'active-play'));
+                }
+            } 
+            else if (stopTime > 0 && player.currentTime >= stopTime) {
+                player.pause(); stopTime = 0; 
+                const active = document.querySelector('.card.playing');
+                if (active) handleRepeatProcess(active);
+            }
+        });
+
+        player.addEventListener('ended', stopAll);
+
+        function handleRepeatProcess(el) {
+            currentRepeat++; 
+            const limit = parseInt(document.getElementById('repeat-count').value) || 1, rate = player.playbackRate;
+            document.getElementById('current-count').innerText = `${currentRepeat} / ${limit}`;
+            
+            const duration = (parseFloat(el.dataset.end) - parseFloat(el.dataset.start)) / rate;
+            const waitTime = isShadowing ? (duration + 1.5) * 1000 : 500; 
+
+            if (currentRepeat < limit) {
+                window.shadowTimer = setTimeout(() => playPart(parseFloat(el.dataset.start), parseFloat(el.dataset.end)), waitTime);
+            } else { 
+                currentRepeat = 0; 
+                if(isAutoPlaying) {
+                    window.shadowTimer = setTimeout(() => handleNext(el), 500); 
+                } else { 
+                    setTimeout(() => {
+                        el.classList.remove('playing', 'active-play'); 
+                        document.getElementById('current-count').innerText = '';
+                    }, 500);
+                } 
+            }
+        }
+
+        function handleNext(el) {
+            const all = Array.from(displayArea.querySelectorAll('.card'));
+            const idx = all.indexOf(el); el.classList.remove('playing', 'active-play');
+            
+            document.getElementById('current-count').innerText = '';
+
+            if (idx < all.length - 1) { 
+                const next = all[idx+1];
+                next.classList.add('active-play', 'playing');
+                scrollToActive(next);
+                window.shadowTimer = setTimeout(() => { 
+                    playPart(parseFloat(next.dataset.start), parseFloat(next.dataset.end));
+                }, 400); 
+            } else stopAll();
+        }
+
+        function setSpeed(s, btn) { 
+            player.playbackRate = s; 
+            document.querySelectorAll('.btn-grp .btn').forEach(b => { if(b.innerText.includes('x')) b.classList.remove('active'); }); 
+            if(btn) btn.classList.add('active');
+        }
+
+        window.onload = () => {
+            initSidebar(); // 메뉴 자동 세팅 및 잠금 처리
+            loadScript('wk01', document.querySelector('.nav-item')); // 첫 화면
+            fontSlider.addEventListener('input', applyFontSize);
+        };
+    </script>
+</body>
+</html>
