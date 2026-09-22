@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 Awakening Dubbing Missions</title>
+    <title>Learning Content</title>
     <!-- 외부 데이터 파일 불러오기 -->
     <script src="data.js"></script>
     <style>
@@ -19,6 +19,9 @@
         /* 레이아웃 구성 */
         .app-layout { display: flex; width: 100%; min-height: 100vh; }
         
+        /* 모바일용 오버레이 */
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.4); z-index: 1050; }
+
         /* 사이드바 네비게이션 */
         .sidebar { position: fixed; top: 0; left: 0; width: 220px; height: 100vh; background: var(--white); border-right: 1px solid var(--border); padding: 20px; z-index: 1100; box-shadow: 2px 0 10px rgba(0,0,0,0.02); }
         .sidebar-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--primary); }
@@ -28,6 +31,9 @@
         .nav-item.active { background: var(--primary); color: var(--white); box-shadow: 0 2px 6px rgba(66, 133, 244, 0.3); }
         .nav-item.locked { color: #b0b5ba; cursor: not-allowed; background: #fafafa; }
         .nav-item.locked .lock-icon { font-size: 12px; }
+
+        /* 모바일 햄버거 버튼 */
+        #mobile-menu-btn { display: none; background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text); margin-right: auto; padding: 0 10px 0 0; }
 
         /* 메인 컨텐츠 영역 */
         .main-content { margin-left: 220px; width: calc(100% - 220px); display: flex; flex-direction: column; min-height: 100vh; }
@@ -91,7 +97,7 @@
         .avatar-BF { background-color: #81c995; } 
         .avatar-S { background-color: #f48fb1; } 
         .avatar-B { background-color: #fbbc04; } 
-        .avatar-M { background-color: #d81b60; }
+        .avatar-M { background-color: #d81b60; } 
 
         .card { position: relative; padding: 10px 14px; border-radius: 20px; max-width: 75%; display: flex; flex-direction: column; border: 2px solid transparent; box-shadow: 0 2px 6px rgba(0,0,0,0.04); transition: 0.2s; cursor: pointer; overflow: hidden; align-items: flex-start; border-bottom-left-radius: 4px; }
         
@@ -134,19 +140,29 @@
         .chunk:hover { background: rgba(66, 133, 244, 0.15); }
         .chunk.active { background: rgba(66, 133, 244, 0.2) !important; color: #174ea6 !important; }
 
+        /* 모바일 모드 최적화 (햄버거 메뉴 및 사이드바 숨김 처리) */
         @media (max-width: 768px) { 
-            .sidebar { width: 80px; padding: 20px 10px; }
-            .sidebar-title { display: none; }
-            .nav-item { flex-direction: column; text-align: center; font-size: 12px; padding: 10px 5px; }
-            .main-content { margin-left: 80px; width: calc(100% - 80px); }
+            #mobile-menu-btn { display: block; }
+            .sidebar-overlay.show { display: block; }
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; width: 220px; padding: 20px; }
+            .sidebar.open { transform: translateX(0); }
+            
+            .main-content { margin-left: 0; width: 100%; }
             .container, .content-wrap { max-width: 95%; }
             .font-control-inline { display: none; }
             .card { max-width: 88%; }
+            
+            /* 모바일 헤더 레이아웃 조정 */
+            .ctrl-row { justify-content: flex-start; }
+            .practice-bar { margin-top: 15px; }
         }
     </style>
 </head>
 <body>
     <div class="app-layout">
+        <!-- 모바일용 오버레이 (클릭 시 사이드바 닫힘) -->
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
         <!-- 사이드바: 자바스크립트로 자동 생성됨 -->
         <aside class="sidebar">
             <div class="sidebar-title">Missions</div>
@@ -158,6 +174,9 @@
             <header class="sticky-header">
                 <div class="container">
                     <div class="ctrl-row">
+                        <!-- 모바일 햄버거 버튼 추가 -->
+                        <button id="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                        
                         <div class="btn-grp">
                             <button class="btn" onclick="setSpeed(0.3, this)">x0.3</button>
                             <button class="btn" onclick="setSpeed(0.5, this)">x0.5</button>
@@ -171,7 +190,7 @@
                             <span class="font-icon large-A">A</span>
                         </div>
 
-                        <div class="btn-grp" id="toggle-group">
+                        <div class="btn-grp" id="toggle-group" style="margin-left: auto;">
                             <button class="btn toggle-btn active" id="btn-ipa" onclick="toggleDisplay('.ipa-text', this)">IPA</button>
                             <button class="btn toggle-btn active" id="btn-trans" onclick="toggleDisplay('.trans-text', this)">한</button>
                         </div>
@@ -222,11 +241,17 @@
         let currentData = null; 
         let isShadowing = false, currentRepeat = 0, stopTime = 0, isAutoPlaying = false, isContinuousPlay = false;
 
+        // 사이드바 토글 함수 (모바일용)
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('show');
+        }
+
         // 시스템 날짜에 맞춰 사이드바 메뉴 렌더링
         function initSidebar() {
             const navList = document.getElementById('nav-list');
             let html = '';
-            const now = new Date(); // 시스템 날짜 로드
+            const now = new Date(); 
 
             for (const [key, data] of Object.entries(scriptsData)) {
                 const unlockDate = data.unlockDate ? new Date(data.unlockDate) : null;
@@ -247,7 +272,6 @@
         function handleNavClick(key, navEl, isLocked) {
             if (isLocked) {
                 const unlockDate = new Date(scriptsData[key].unlockDate);
-                // hour12: false 옵션을 추가하여 24시간제로 표시
                 const formatOpts = { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
                 alert(`아직 잠겨있는 미션입니다.\n공개 일시: ${unlockDate.toLocaleString('ko-KR', formatOpts)}`);
                 return;
@@ -292,6 +316,12 @@
             currentData = scriptsData[key];
             stopAll(); 
             renderContent();
+
+            // 모바일 화면일 경우 스크립트 로드 후 사이드바 닫기
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.remove('open');
+                document.querySelector('.sidebar-overlay').classList.remove('show');
+            }
         }
 
         function renderContent() {
@@ -534,8 +564,8 @@
         }
 
         window.onload = () => {
-            initSidebar(); // 메뉴 자동 세팅 및 잠금 처리
-            loadScript('wk01', document.querySelector('.nav-item')); // 첫 화면
+            initSidebar(); 
+            loadScript('wk01', document.querySelector('.nav-item')); 
             fontSlider.addEventListener('input', applyFontSize);
         };
     </script>
