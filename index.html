@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Content</title>
+    <title>2026 Awakening Dubbing Missions</title>
     <!-- 외부 데이터 파일 불러오기 -->
     <script src="data.js"></script>
     <style>
@@ -61,7 +61,7 @@
         .practice-bar { background: #fff; padding: 10px 20px; border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; height: 50px; margin-top: 10px; }
         .left-controls { display: flex; align-items: center; gap: 15px; }
         
-        #global-status-icon, #global-skip-icon { font-size: 18px; text-align: center; cursor: pointer; transition: 0.2s; }
+        #global-prev-icon, #global-status-icon, #global-skip-icon { font-size: 18px; text-align: center; cursor: pointer; transition: 0.2s; }
         
         .switch-box { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: bold; white-space: nowrap; }
         
@@ -198,10 +198,12 @@
 
                     <div class="practice-bar">
                         <div class="left-controls">
-                            <span id="global-status-icon" onclick="toggleAutoPlayAll()">▶️</span>
-                            <span id="global-skip-icon" onclick="skipNext()" style="margin-left:-2px;">⏭️</span>
+                            <!-- 이전/재생/다음 컨트롤 영역 -->
+                            <span id="global-prev-icon" onclick="skipPrev()">⏮️</span>
+                            <span id="global-status-icon" onclick="toggleAutoPlayAll()" style="margin: 0 5px;">▶️</span>
+                            <span id="global-skip-icon" onclick="skipNext()">⏭️</span>
                             
-                            <div class="switch-box" style="margin-left: 5px;">
+                            <div class="switch-box" style="margin-left: 10px;">
                                 <label class="text-toggle">
                                     <input type="checkbox" id="shadow-mode" onchange="syncSettings('shadow', this.checked)">
                                     <div class="text-toggle-slider"></div>
@@ -317,7 +319,6 @@
             stopAll(); 
             renderContent();
 
-            // 모바일 화면일 경우 스크립트 로드 후 사이드바 닫기
             if (window.innerWidth <= 768) {
                 document.querySelector('.sidebar').classList.remove('open');
                 document.querySelector('.sidebar-overlay').classList.remove('show');
@@ -435,6 +436,56 @@
                 isContinuousPlay = true;
                 player.currentTime = 0;
                 player.play();
+            }
+        }
+
+        // 이전 문장으로 돌아가는 함수 추가
+        function skipPrev() {
+            clearTimeout(window.shadowTimer);
+            const active = document.querySelector('.card.playing') || document.querySelector('.card.active-play');
+            
+            if (isContinuousPlay) {
+                const ct = player.currentTime;
+                const cards = Array.from(document.querySelectorAll('.card'));
+                // 현재 시간 기준 이전 문장 탐색
+                let prevCard = cards.slice().reverse().find(c => parseFloat(c.dataset.start) < ct - 1.0);
+                if (prevCard) {
+                    player.currentTime = parseFloat(prevCard.dataset.start);
+                } else {
+                    player.currentTime = 0; // 맨 처음이면 처음으로 되돌림
+                }
+                return;
+            }
+
+            if (active) {
+                player.pause();
+                currentRepeat = 0;
+                isAutoPlaying = true;
+                statusIcon.innerText = "⏸️";
+
+                const all = Array.from(displayArea.querySelectorAll('.card'));
+                const idx = all.indexOf(active);
+                active.classList.remove('playing', 'active-play');
+                document.getElementById('current-count').innerText = '';
+
+                if (idx > 0) {
+                    const prev = all[idx - 1];
+                    prev.classList.add('active-play', 'playing');
+                    scrollToActive(prev);
+                    window.shadowTimer = setTimeout(() => { 
+                        playPart(parseFloat(prev.dataset.start), parseFloat(prev.dataset.end));
+                    }, 400);
+                } else {
+                    // 첫 문장일 경우 해당 문장 다시 재생
+                    const first = all[0];
+                    first.classList.add('active-play', 'playing');
+                    scrollToActive(first);
+                    window.shadowTimer = setTimeout(() => { 
+                        playPart(parseFloat(first.dataset.start), parseFloat(first.dataset.end));
+                    }, 400);
+                }
+            } else {
+                toggleAutoPlayAll();
             }
         }
 
