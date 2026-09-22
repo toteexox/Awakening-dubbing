@@ -1,6 +1,6 @@
 const scriptsData = {
     wk01: {
-        title: "Emily in Paris | The First Meeting",
+        title: "Emily in Paris | 시즌1 - EP1 ",
         audio: "WK01 Dubbing.wav",
         unlockDate: "2026-09-10T00:00:00+09:00", // 9월 10일 공개
         sentences: [
@@ -275,7 +275,7 @@ const scriptsData = {
         ]
     },
     wk02: {
-        title: "Emily in Paris | Dubbing Practice",
+        title: "Emily in Paris | 시즌1 - EP1 ",
         audio: "WK02 Dubbing.wav",
         unlockDate: "2026-09-17T00:00:00+09:00", // 9월 17일 공개
         sentences: [
@@ -396,7 +396,7 @@ const scriptsData = {
 
 
     wk03: {
-        title: "Emily in Paris | An Illogical Culture",
+        title: "Emily in Paris | 시즌1 - EP2 ",
         audio: "WK03 Dubbing.wav",
         unlockDate: "2026-09-24T00:00:00+09:00",
         sentences: [
@@ -472,7 +472,7 @@ const scriptsData = {
 
 
     wk04: {
-        title: "Emily in Paris | Romantics & Realists",
+        title: "Emily in Paris | 시즌1 - EP2 ",
         audio: "WK04 Dubbing.wav",
         unlockDate: "2026-10-01T00:00:00+09:00",
         sentences: [
