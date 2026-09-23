@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Awakening Dubbing Missions</title>
+    <title>2026 Awakening Dubbing Missions</title>
     <!-- 외부 데이터 파일 불러오기 -->
     <script src="data.js"></script>
     <style>
@@ -616,7 +616,33 @@
 
         window.onload = () => {
             initSidebar(); 
-            loadScript('wk01', document.querySelector('.nav-item')); 
+            
+            // 현재 시간 기준으로 가장 마지막에 오픈된 챕터 찾기
+            const now = new Date();
+            let latestKey = Object.keys(scriptsData)[0]; // 기본값: 첫 번째 미션
+            let latestTime = -1;
+
+            for (const key of Object.keys(scriptsData)) {
+                const data = scriptsData[key];
+                // unlockDate가 없으면(null) 무조건 오픈된 것으로 간주(0으로 처리)
+                const unlockTime = data.unlockDate ? new Date(data.unlockDate).getTime() : 0; 
+                
+                // 이미 오픈된 미션 중에서 가장 최신 시간인지 비교
+                if (unlockTime <= now.getTime()) {
+                    // 동일한 날짜(예: wk03, wk04)라면 더 뒤에 있는 챕터(wk04)가 선택되도록 >= 사용
+                    if (unlockTime >= latestTime) {
+                        latestTime = unlockTime;
+                        latestKey = key;
+                    }
+                }
+            }
+
+            // 계산된 최신 챕터의 네비게이션 버튼을 찾아서 클릭(로드) 처리
+            const targetNav = document.querySelector(`.nav-item[data-key="${latestKey}"]`);
+            if (targetNav) {
+                loadScript(latestKey, targetNav);
+            }
+            
             fontSlider.addEventListener('input', applyFontSize);
         };
     </script>
