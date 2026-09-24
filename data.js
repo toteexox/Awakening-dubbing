@@ -1,6 +1,6 @@
 const scriptsData = {
     wk01: {
-        title: "Emily in Paris | The First Meeting",
+        title: "Emily in Paris | 시즌1-01화",
         audio: "WK01 Dubbing.wav",
         unlockDate: "2026-09-10T00:00:00+09:00", // 9월 10일 공개
         sentences: [
@@ -274,8 +274,11 @@ const scriptsData = {
             }
         ]
     },
+
+
+
     wk02: {
-        title: "Emily in Paris | Dubbing Practice",
+        title: "Emily in Paris | 시즌1-01화",
         audio: "WK02 Dubbing.wav",
         unlockDate: "2026-09-17T00:00:00+09:00", // 9월 17일 공개
         sentences: [
@@ -392,89 +395,10 @@ const scriptsData = {
         ]
     },
 
-
-
-
     wk03: {
-        title: "Emily in Paris | An Illogical Culture",
+        title: "Emily in Paris | 시즌1-02화",
         audio: "WK03 Dubbing.wav",
         unlockDate: "2026-09-24T00:00:00+09:00",
-        sentences: [
-            {
-                speaker: 'M',
-                start: 0.420, end: 6.020,
-                ipa: "/ɪts ən ɪˈlɑdʒɪkəl ˈkʌltʃər, bʌt ɪts ə ˈbjuːtəfəl wʌn, tuː. ˈbɛtər tə dʒʌst lɛt ɪt wɑʃ ˈoʊvər juː./",
-                trans: "비논리적인 문화이긴 하지만, 아름다운 문화이기도 해. 그냥 그 문화에 몸을 맡기는 게 나아.",
-                chunks: [
-                    { text: "It's an illogical culture,", s: 0.420, e: 1.610 },
-                    { text: "but it's a beautiful one, too", s: 1.610, e: 3.920 },
-                    { text: "Better to just let it", s: 3.920, e: 4.880 },
-                    { text: "wash over you.", s: 4.880, e: 6.020 }
-                ]
-            },
-            {
-                speaker: 'E',
-                start: 6.020, end: 8.740,
-                ipa: "/jæ, bʌt ðæts dʒʌst ɪt. aɪm ˈwɜːrid aɪ maɪt draʊn. /",
-                trans: "응, 근데 바로 그거야. 난 익사할까 봐 걱정돼. ",
-                chunks: [
-                    { text: "Yeah, but that's just it.", s: 6.020, e: 7.500 },
-                    { text: "I'm worried I might drown.", s: 7.500, e: 8.740 }
-
-                ]
-            },
-            {
-                speaker: 'E',
-                start: 10.200, end: 13.400,
-                ipa: "/ˈmeɪbi aɪm dʒʌst nɑt kʌt aʊt fɔːr ðɪs ˈsɪti, juː noʊ? aɪ θɔt ɪt wʌz ˈgɔnə biː ən ædˈvɛntʃər./",
-                trans: "어쩌면 난 이 도시랑 안 맞는 걸지도 몰라, 알지? 난 이게 모험이 될 줄 알았어.",
-                chunks: [
-                    { text: "Maybe I'm just", s: 10.200, e: 11.060 },
-                    { text: "not cut out for this city, you know?", s: 11.060, e: 12.510 },
-                    { text: "I thought it was gonna be an adventure.", s: 12.510, e: 13.400 }
-                ]
-            },
-            {
-                speaker: 'M',
-                start: 13.610, end: 16.670,
-                ipa: "/ænd ɪt ɪz. ˈmeɪbi ən ˈivən ˈbɛtər wʌn ðæn juː ɪˈmædʒɪnd./",
-                trans: "그리고 모험이 맞아. 아마 네가 상상했던 것보다 훨씬 더 멋진 모험일 거야.",
-                chunks: [
-                    { text: "And it is.", s: 13.610, e: 14.880 },
-                    { text: "Maybe an even better one than you imagined.", s: 14.880, e: 16.670 }
-                ]
-            },
-            {
-                speaker: 'E',
-                start: 18.660, end: 21.730,
-                ipa: "/aɪ dʒʌst ˈnɛvər ˈpɪktʃərd maɪˈsɛlf hɪər əˈloʊn./",
-                trans: "그냥 나 혼자 여기에 있는 건 상상도 못 해봤거든.",
-                chunks: [
-                    { text: "I just never pictured myself here alone.", s: 18.660, e: 21.730 }
-                ]
-            },
-            {
-                speaker: 'M',
-                start: 21.730, end: 33.220,
-                ipa: "/jʊər nɑt əˈloʊn. juː hæv ə frɛnd hɪər naʊ. ˈpærɪs ɪz ðə moʊst ɪkˈsaɪtɪŋ ˈsɪti ɪn ðə wɜrld. ænd juː ˈnɛvər noʊ wʌts ˈgɔnə ˈhæpən nɛkst./",
-                trans: "넌 혼자가 아니야. 이제 여기 친구가 있잖아. 파리는 세상에서 가장 신나는 도시야. 그리고 다음에 무슨 일이 일어날지 아무도 모르지.",
-                chunks: [
-                    { text: "You're not alone.", s: 21.730, e: 22.690 },
-                    { text: "You have a friend here now.", s: 23.930, e: 25.150 },
-                    { text: "Paris is the most", s: 27.710, e: 28.660 },
-                    { text: "exciting city in the world.", s: 28.660, e: 30.420 },
-                    { text: "And you never know", s: 30.420, e: 31.220 },
-                    { text: "what's gonna happen next.", s: 31.220, e: 33.220 }
-                ]
-            }
-        ]
-    },
-
-
-    wk04: {
-        title: "Emily in Paris | Romantics & Realists",
-        audio: "WK04 Dubbing.wav",
-        unlockDate: "2026-10-01T00:00:00+09:00",
         sentences: [
             {
                 speaker: 'E',
@@ -593,5 +517,84 @@ const scriptsData = {
                 ]
             }
         ]
+    },
+
+
+
+    wk04: {
+        title: "Emily in Paris | 시즌1-02화",
+        audio: "WK04 Dubbing.wav",
+        unlockDate: "2026-10-01T00:00:00+09:00",
+        sentences: [
+            {
+                speaker: 'M',
+                start: 0.420, end: 6.020,
+                ipa: "/ɪts ən ɪˈlɑdʒɪkəl ˈkʌltʃər, bʌt ɪts ə ˈbjuːtəfəl wʌn, tuː. ˈbɛtər tə dʒʌst lɛt ɪt wɑʃ ˈoʊvər juː./",
+                trans: "비논리적인 문화이긴 하지만, 아름다운 문화이기도 해. 그냥 그 문화에 몸을 맡기는 게 나아.",
+                chunks: [
+                    { text: "It's an illogical culture,", s: 0.420, e: 1.610 },
+                    { text: "but it's a beautiful one, too", s: 1.610, e: 3.920 },
+                    { text: "Better to just let it", s: 3.920, e: 4.880 },
+                    { text: "wash over you.", s: 4.880, e: 6.020 }
+                ]
+            },
+            {
+                speaker: 'E',
+                start: 6.020, end: 8.740,
+                ipa: "/jæ, bʌt ðæts dʒʌst ɪt. aɪm ˈwɜːrid aɪ maɪt draʊn. /",
+                trans: "응, 근데 바로 그거야. 난 익사할까 봐 걱정돼. ",
+                chunks: [
+                    { text: "Yeah, but that's just it.", s: 6.020, e: 7.500 },
+                    { text: "I'm worried I might drown.", s: 7.500, e: 8.740 }
+
+                ]
+            },
+            {
+                speaker: 'E',
+                start: 10.200, end: 13.400,
+                ipa: "/ˈmeɪbi aɪm dʒʌst nɑt kʌt aʊt fɔːr ðɪs ˈsɪti, juː noʊ? aɪ θɔt ɪt wʌz ˈgɔnə biː ən ædˈvɛntʃər./",
+                trans: "어쩌면 난 이 도시랑 안 맞는 걸지도 몰라, 알지? 난 이게 모험이 될 줄 알았어.",
+                chunks: [
+                    { text: "Maybe I'm just", s: 10.200, e: 11.060 },
+                    { text: "not cut out for this city, you know?", s: 11.060, e: 12.510 },
+                    { text: "I thought it was gonna be an adventure.", s: 12.510, e: 13.400 }
+                ]
+            },
+            {
+                speaker: 'M',
+                start: 13.610, end: 16.670,
+                ipa: "/ænd ɪt ɪz. ˈmeɪbi ən ˈivən ˈbɛtər wʌn ðæn juː ɪˈmædʒɪnd./",
+                trans: "그리고 모험이 맞아. 아마 네가 상상했던 것보다 훨씬 더 멋진 모험일 거야.",
+                chunks: [
+                    { text: "And it is.", s: 13.610, e: 14.880 },
+                    { text: "Maybe an even better one than you imagined.", s: 14.880, e: 16.670 }
+                ]
+            },
+            {
+                speaker: 'E',
+                start: 18.660, end: 21.730,
+                ipa: "/aɪ dʒʌst ˈnɛvər ˈpɪktʃərd maɪˈsɛlf hɪər əˈloʊn./",
+                trans: "그냥 나 혼자 여기에 있는 건 상상도 못 해봤거든.",
+                chunks: [
+                    { text: "I just never pictured myself here alone.", s: 18.660, e: 21.730 }
+                ]
+            },
+            {
+                speaker: 'M',
+                start: 21.730, end: 33.220,
+                ipa: "/jʊər nɑt əˈloʊn. juː hæv ə frɛnd hɪər naʊ. ˈpærɪs ɪz ðə moʊst ɪkˈsaɪtɪŋ ˈsɪti ɪn ðə wɜrld. ænd juː ˈnɛvər noʊ wʌts ˈgɔnə ˈhæpən nɛkst./",
+                trans: "넌 혼자가 아니야. 이제 여기 친구가 있잖아. 파리는 세상에서 가장 신나는 도시야. 그리고 다음에 무슨 일이 일어날지 아무도 모르지.",
+                chunks: [
+                    { text: "You're not alone.", s: 21.730, e: 22.690 },
+                    { text: "You have a friend here now.", s: 23.930, e: 25.150 },
+                    { text: "Paris is the most", s: 27.710, e: 28.660 },
+                    { text: "exciting city in the world.", s: 28.660, e: 30.420 },
+                    { text: "And you never know", s: 30.420, e: 31.220 },
+                    { text: "what's gonna happen next.", s: 31.220, e: 33.220 }
+                ]
+            }
+        ]
     }
+
+
 };
