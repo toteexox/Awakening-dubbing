@@ -562,30 +562,48 @@
             } 
             else if (stopTime > 0 && player.currentTime >= stopTime) {
                 player.pause(); stopTime = 0; 
-                const active = document.querySelector('.card.playing');
-                if (active) handleRepeatProcess(active);
+                
+                // 청크가 활성화된 상태인지, 카드가 활성화된 상태인지 구분
+                const activeChunk = document.querySelector('.chunk.active');
+                if (activeChunk) {
+                    handleRepeatProcess(activeChunk, true);
+                } else {
+                    const activeCard = document.querySelector('.card.playing');
+                    if (activeCard) handleRepeatProcess(activeCard, false);
+                }
             }
         });
 
         player.addEventListener('ended', stopAll);
 
-        function handleRepeatProcess(el) {
+        function handleRepeatProcess(el, isChunk = false) {
             currentRepeat++; 
             const limit = parseInt(document.getElementById('repeat-count').value) || 1, rate = player.playbackRate;
             document.getElementById('current-count').innerText = `${currentRepeat} / ${limit}`;
             
-            const duration = (parseFloat(el.dataset.end) - parseFloat(el.dataset.start)) / rate;
+            // 청크면 data-s/e 를, 카드면 data-start/end 를 사용
+            const s = isChunk ? parseFloat(el.dataset.s) : parseFloat(el.dataset.start);
+            const e = isChunk ? parseFloat(el.dataset.e) : parseFloat(el.dataset.end);
+            
+            const duration = (e - s) / rate;
             const waitTime = isShadowing ? (duration + 1.5) * 1000 : 500; 
 
             if (currentRepeat < limit) {
-                window.shadowTimer = setTimeout(() => playPart(parseFloat(el.dataset.start), parseFloat(el.dataset.end)), waitTime);
+                window.shadowTimer = setTimeout(() => playPart(s, e), waitTime);
             } else { 
                 currentRepeat = 0; 
-                if(isAutoPlaying) {
+                // 전체 자동 재생 중일 때만 다음 카드로 넘어가고, 청크 클릭 시에는 반복 후 정지
+                if(isAutoPlaying && !isChunk) {
                     window.shadowTimer = setTimeout(() => handleNext(el), 500); 
                 } else { 
                     setTimeout(() => {
-                        el.classList.remove('playing', 'active-play'); 
+                        if (isChunk) {
+                            el.classList.remove('active');
+                            const parentCard = el.closest('.card');
+                            if (parentCard) parentCard.classList.remove('playing', 'active-play');
+                        } else {
+                            el.classList.remove('playing', 'active-play'); 
+                        }
                         document.getElementById('current-count').innerText = '';
                     }, 500);
                 } 
