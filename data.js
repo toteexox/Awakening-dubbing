@@ -321,7 +321,7 @@ const scriptsData = {
             },
             {
                 speaker: 'E',
-                start: 9.280, end: 18.890,
+                start: 9.280, end: 13.650,
                 ipa: "/ɡreɪt. oʊˈkeɪ, ˈmeɪbi ə fjuː θɪŋz ɡɑt lɔst ɪn trænsˈleɪʃən./",
                 trans: "좋았어. 뭐, 소통에 약간 문제가 있긴 했지만.",
                 chunks: [
