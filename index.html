@@ -512,12 +512,12 @@
             }
         }
 
-        function playPart(s, e) { 
+                function playPart(s, e) { 
             clearTimeout(window.shadowTimer); 
             const rate = player.playbackRate;
             
-            // 시작 오프셋을 제거하거나 아주 미세하게만 주어 앞부분이 잘리지 않게 함
-            let startPoint = Math.max(0, s - (0.01 * rate)); 
+            // 기존 0.01에서 0.1로 늘려 시작 지점을 더 앞당김
+            let startPoint = Math.max(0, s - (0.1 * rate)); 
             let endPoint = e;
 
             if ((e - s) > 0.8) {
@@ -528,6 +528,7 @@
             player.currentTime = startPoint; 
             player.play(); 
         }
+
 
 
         function stopAll() { 
