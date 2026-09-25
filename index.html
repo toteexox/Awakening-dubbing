@@ -515,14 +515,20 @@
         function playPart(s, e) { 
             clearTimeout(window.shadowTimer); 
             const rate = player.playbackRate;
-            let startPoint = Math.max(0, s - (0.05 * rate)); 
+            
+            // 시작 오프셋을 제거하거나 아주 미세하게만 주어 앞부분이 잘리지 않게 함
+            let startPoint = Math.max(0, s - (0.01 * rate)); 
             let endPoint = e;
 
-            if ((e - s) > 0.8) endPoint = e - (0.15 * rate); 
+            if ((e - s) > 0.8) {
+                endPoint = e - (0.15 * rate); 
+            }
+
             stopTime = endPoint; 
             player.currentTime = startPoint; 
             player.play(); 
         }
+
 
         function stopAll() { 
             player.pause(); 
