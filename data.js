@@ -511,7 +511,7 @@ const scriptsData = {
                 ipa: "/m... æt fɜrst, ˈbɪznɪs skuːl. maɪ ˈfɑðər ɪnˈsɪstɪd, ænd hiz just tuː ˈgɛtɪŋ hɪz weɪ./",
                 trans: "음 처음엔 비즈니스 스쿨 때문이었어. 아빠가 우기셨거든, 그리고 아빠는 항상 자기 뜻대로 하는 데 익숙하신 분이니까.",
                 chunks: [
-                    { text: "Mm At first, business school", s: 30.430, e: 33.020 },
+                    { text: "Mm... At first, business school.", s: 30.430, e: 33.020 },
                     { text: "My father insisted,", s: 33.020, e: 34.240 },
                     { text: "and he's used to getting his way.", s: 34.240, e: 35.840 }
                 ]
@@ -587,8 +587,7 @@ const scriptsData = {
                 chunks: [
                     { text: "You're not alone.", s: 21.730, e: 22.690 },
                     { text: "You have a friend here now.", s: 23.930, e: 25.150 },
-                    { text: "Paris is the most", s: 27.710, e: 28.660 },
-                    { text: "exciting city in the world.", s: 28.660, e: 30.420 },
+                    { text: "Paris is the most exciting city in the world.", s: 27.710, e: 30.420 },
                     { text: "And you never know", s: 30.420, e: 31.220 },
                     { text: "what's gonna happen next.", s: 31.220, e: 33.220 }
                 ]
